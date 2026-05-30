@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "fix",
   "description": "Fix all bugs in /projects/sandbox/scripccp/config/config.json - ports as strings, duplicate top-level keys, routing tag mismatches, duplicate routing rules, and missing reject outbound",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Rewrite /projects/sandbox/scripccp/config/config.json as a clean JSONC file that fixes all the following issues while keeping all # comment markers exactly as they are (they work with Xray's JSONC parser):",
     "1. Fix port values: Change all string ports to integers - '10001' to 10001, '10002' to 10002, '10003' to 10003, '10004' to 10004, '10005' to 10005, '10006' to 10006, '10007' to 10007, '10008' to 10008. Port 10000 (api dokodemo-door) is already correct as integer.",
@@ -37,5 +37,5 @@
     "Run: grep '\"tag\".*\"direct\"' /projects/sandbox/scripccp/config/config.json to confirm direct outbound exists"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "All fixes applied successfully. The original also had a duplicate bittorrent rule (one with outboundTag 'direct' and one with outboundTag 'blocked') - kept only the 'direct' version since blocking bittorrent entirely would break functionality for users. The file passes JSON validation after comment stripping."
 }
