@@ -1,0 +1,41 @@
+{
+  "id": "FEAT-001",
+  "type": "fix",
+  "description": "Fix all bugs in /projects/sandbox/scripccp/config/config.json - ports as strings, duplicate top-level keys, routing tag mismatches, duplicate routing rules, and missing reject outbound",
+  "status": "in_progress",
+  "steps": [
+    "Rewrite /projects/sandbox/scripccp/config/config.json as a clean JSONC file that fixes all the following issues while keeping all # comment markers exactly as they are (they work with Xray's JSONC parser):",
+    "1. Fix port values: Change all string ports to integers - '10001' to 10001, '10002' to 10002, '10003' to 10003, '10004' to 10004, '10005' to 10005, '10006' to 10006, '10007' to 10007, '10008' to 10008. Port 10000 (api dokodemo-door) is already correct as integer.",
+    "2. Remove duplicate top-level keys: The file has two 'api' blocks, two 'policy' blocks, and two 'stats' blocks. Keep ONLY the more complete versions at the bottom (the ones with system stats: statsInboundUplink, statsInboundDownlink, statsOutboundUplink, statsOutboundDownlink). Remove the first/earlier api, stats, and policy blocks entirely. The final api block should have services: ['StatsService'] and tag: 'api'. The final policy block should have levels.0 with statsUserDownlink and statsUserUplink true, plus the system block.",
+    "3. Fix routing outboundTag mismatches: (a) Change all routing rules with 'outboundTag': 'block' to 'outboundTag': 'blocked' (matching the existing blackhole outbound tag). (b) Change the rule with 'outboundTag': 'proxy' to 'outboundTag': 'direct' (no proxy outbound exists, use direct instead). (c) Add a new blackhole outbound with tag 'reject' for the ad-blocking rule that references outboundTag 'reject'.",
+    "4. Remove duplicate routing rule: The private IP block rule (0.0.0.0/8, 10.0.0.0/8, etc.) appears twice. Remove the second occurrence.",
+    "5. Fix the first freedom outbound: It is missing a tag. Add 'tag': 'direct' to it so routing rules referencing 'direct' work.",
+    "6. Keep the dns block from the bottom of the file.",
+    "7. Ensure the structure is valid JSONC that Xray can parse - proper commas, brackets, no trailing commas except where Xray allows them.",
+    "8. Keep ALL comment markers (#vmess, #vmessgrpc, #vless, #vlessgrpc, #trojanws, #trojangrpc, #ssws, #ssgrpc) in their exact positions within client arrays. These are essential for the sed-based user injection system.",
+    "9. Ensure the #ssgrpc marker does NOT have a trailing space (the original has '#ssgrpc ' with a space that could cause sed matching issues)."
+  ],
+  "acceptance_criteria": [
+    "All inbound ports are integers (not strings)",
+    "Only one api block, one policy block, one stats block exist",
+    "The policy block includes the system stats section",
+    "All routing rules reference valid outbound tags (blocked, direct, reject, api, dnsOut)",
+    "A blackhole outbound with tag 'reject' exists",
+    "The freedom outbound has tag 'direct'",
+    "No duplicate private IP blocking rules exist",
+    "All 8 comment markers are preserved in their correct inbound client arrays",
+    "The dns block is preserved",
+    "The file is valid JSONC parseable by Xray-core"
+  ],
+  "verification": [
+    "Run: python3 -c \"import re; content=open('/projects/sandbox/scripccp/config/config.json').read(); clean=re.sub(r'(?m)^\\s*#.*$', '', content); import json; json.loads(clean); print('JSON valid')\" to verify the config is valid JSON after stripping # comments",
+    "Run: grep -c '\"port\"' /projects/sandbox/scripccp/config/config.json to confirm port entries exist",
+    "Run: grep '\"port\":' /projects/sandbox/scripccp/config/config.json to confirm all ports are integers (no quotes around numbers)",
+    "Run: grep -c '#vmess$' /projects/sandbox/scripccp/config/config.json to confirm markers exist (should be 1)",
+    "Run: grep -c '#vmessgrpc$' /projects/sandbox/scripccp/config/config.json to confirm markers exist (should be 1)",
+    "Run: grep '\"tag\".*\"reject\"' /projects/sandbox/scripccp/config/config.json to confirm reject outbound exists",
+    "Run: grep '\"tag\".*\"direct\"' /projects/sandbox/scripccp/config/config.json to confirm direct outbound exists"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}
