@@ -24,7 +24,7 @@ clear;clear;clear
 
   # // Banner
 echo -e "${YELLOW}----------------------------------------------------------${NC}"
-echo -e "  Auther : ${green}CAPCAPAN® ${NC}${YELLOW}(${NC} ${green} XPRESS ${NC}${YELLOW})${NC}"
+echo -e "  Auther : ${green}XYZSTOREE® ${NC}${YELLOW}(${NC} ${green} TUNNEL ${NC}${YELLOW})${NC}"
 echo -e "${YELLOW}----------------------------------------------------------${NC}"
 echo ""
 sleep 2
