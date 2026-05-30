@@ -37,5 +37,5 @@
     "Run: grep '\"tag\".*\"direct\"' /projects/sandbox/scripccp/config/config.json to confirm direct outbound exists"
   ],
   "blocked_reason": null,
-  "findings": "All fixes applied successfully. The original also had a duplicate bittorrent rule (one with outboundTag 'direct' and one with outboundTag 'blocked') - kept only the 'direct' version since blocking bittorrent entirely would break functionality for users. The file passes JSON validation after comment stripping."
+  "findings": "All fixes applied successfully. Post-review corrections: (1) removed spurious 'decryption: none' from trojan inbounds (ports 10003, 10007) since this is vless-only, (2) changed bittorrent routing rule outboundTag from 'direct' to 'blocked' to preserve original intent of blocking bittorrent traffic on the VPS."
 }
